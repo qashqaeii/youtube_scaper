@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 import re
 import io
+from xlsxwriter import Workbook
 
 def extract_data(channel_username, limit, sort_by):
     s = 2
@@ -75,6 +76,7 @@ def main():
                                    value=10)
     selected_radio = st.radio("Select your sort", ["newest", "oldest", "popular"])
     st.markdown("---")
+    st.write("developed by : HOSSEIN QASHQAEII 🧛 ")
     if st.button("Scrape Data"):
         if channel_username and selected_radio:
             extracted_videos = extract_data(channel_username, number_input, selected_radio)
@@ -87,7 +89,7 @@ def main():
                 df.to_excel(writer, sheet_name='Sheet1', index=False)
             excel_file.seek(0)
             st.download_button("Download Excel 💾", data=excel_file, file_name=f'{channel_username}.xlsx')
-            st.write("developed by : HOSSEIN QASHQAEII 🧛 ")
+            
         else:
             st.write("Please provide the channel username and select a sorting option.")
             st.markdown("---")

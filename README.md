@@ -3,9 +3,7 @@
 YouTube Scraper
 This is a YouTube scraper application built in Python using the Scrapetube library and Streamlit framework. The application allows you to extract data from a YouTube channel, such as video titles, view counts, video durations, descriptions, and video links. The extracted data can be displayed in a table and downloaded as an Excel file.
 
-Installation
-
-git clone https://github.com/qashqaeii/youtube-scraper.git
+Installation:
 Navigate to the project directory:
 cd youtube-scraper
 

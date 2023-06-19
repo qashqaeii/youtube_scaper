@@ -5,7 +5,7 @@ This is a YouTube scraper application built in Python using the Scrapetube libra
 
 Installation
 
-git clone https://github.com/your-username/youtube-scraper.git
+git clone https://github.com/qashqaeii/youtube-scraper.git
 Navigate to the project directory:
 cd youtube-scraper
 

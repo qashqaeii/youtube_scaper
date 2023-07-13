@@ -7,6 +7,7 @@ from xlsxwriter import Workbook
 from streamlit_extras.buy_me_a_coffee import button
 from langchain.document_loaders import YoutubeLoader
 
+
 def extract_data(channel_username, limit, sort_by, search_query=None):
     s = 2
     list_all_videos = []

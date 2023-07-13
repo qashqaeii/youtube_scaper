@@ -4,7 +4,8 @@ import streamlit as st
 import re
 import io
 from xlsxwriter import Workbook
-
+from streamlit_extras.buy_me_a_coffee import button
+from langchain.document_loaders import YoutubeLoader
 
 def extract_data(channel_username, limit, sort_by, search_query=None):
     s = 2
@@ -73,6 +74,11 @@ def filter_videos(videos, search_query):
             filtered_videos.append(video)
 
     return filtered_videos
+def Youtube_Extract(url):
+    loader = YoutubeLoader.from_youtube_url(url)
+    data =loader.load()
+    dataa = data[0].page_content
+    return (dataa)
 
 
 def main():
@@ -102,24 +108,31 @@ def main():
         if channel_username and selected_radio:
             extracted_videos = extract_data(channel_username, number_input, selected_radio, search_query)
             len_list = len(extracted_videos)
-
-            st.write(f"Scraped Videos ({len_list}) 🧲️")
-            st.write(pd.DataFrame(extracted_videos))
-            st.markdown("---")
-            cols = st.columns(1)
-            for x, video in enumerate(extracted_videos):
-                with cols[x % 1]:
-                    st.title(video["title"])
-                    st.video(video["link"])
-                    st.write(video["description"])
-                    st.markdown("---")
-
             df = pd.DataFrame(extracted_videos)
             excel_file = io.BytesIO()
             with pd.ExcelWriter(excel_file, engine='xlsxwriter') as writer:
                 df.to_excel(writer, sheet_name='Sheet1', index=False)
             excel_file.seek(0)
+            st.write(f"Scraped Videos ({len_list}) 🧲️")
+            st.write(pd.DataFrame(extracted_videos))
             st.download_button("Download Excel 💾", data=excel_file, file_name=f'{channel_username}.xlsx')
+            st.markdown("---")
+            cols = st.columns(1)
+            for x, video in enumerate(extracted_videos):
+                with cols[x % 1]:
+                    l = video["link"]
+                    st.title(video["title"])
+                    st.video(video["link"])
+                    st.write(video["description"])
+                    with st.expander("The Text Of Video 👇 "):
+                        t = Youtube_Extract(l)
+                        text = st.text_area("متن ویدیو", value=t)
+                        if text:
+                            st.download_button("Download", data=text, file_name=f"text.txt")
+
+                    st.markdown("---")
+
+
 
         else:
             st.write("Please provide the channel username and select a sorting option.")

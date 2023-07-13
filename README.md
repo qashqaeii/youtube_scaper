@@ -21,6 +21,8 @@ Select the sorting option from the radio buttons (newest, oldest, or popular).
 Click the "Scrape Data" button to start the data extraction process.
 The extracted videos will be displayed in a table on the web interface.
 To download the extracted data as an Excel file, click the "Download Excel" button.
+- update 7/13/2023 :
+- And now with the new update you can convert any YouTube video to text.
 Contributing
 Contributions are welcome! If you encounter any issues or have suggestions for improvements, please feel free to open an issue or submit a pull request.
 

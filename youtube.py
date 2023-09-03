@@ -2,7 +2,6 @@ import time
 import scrapetube
 import pandas as pd
 import streamlit as st
-import openai
 import re
 import io
 from xlsxwriter import Workbook

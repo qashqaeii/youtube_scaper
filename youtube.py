@@ -70,28 +70,30 @@ def main():
     st.set_page_config(
         page_title="qashqaeii App",
         page_icon="y.png",
+        
+        
     )
 
-    col1, col2 = st.columns([2, 1])
-    col1.markdown("# یوتوبر ساز")
-    col1.markdown("""
+    
+    st.markdown("# یوتوبر ساز")
+    st.markdown("""
 این برنامه به کمک هوش مصنوعی و خزشگر یوتوب این امکانات را برای شما محیا میکند :
                   ترجمه کامل و جامع هم به زبان فارسی و هم انگلیسی
                   امکان 
 
     """)
-    with col2:
-        lottie_resume = load_lottiefile("youtube.json")
-        st_lottie(
-            animation_source=lottie_resume,
-            speed=1,
-            reverse=False,
-            loop=True,
-            quality="high",
-            height=None,
-            width=250,
-            key=None,
-        )
+    
+    lottie_resume = load_lottiefile("youtube.json")
+    st_lottie(
+        animation_source=lottie_resume,
+        speed=1,
+        reverse=False,
+        loop=True,
+        quality="high",
+        height=None,
+        width=250,
+        key=None,
+    )
 
     with st.form("form2"):
         col3, col4 = st.columns([8, 5])

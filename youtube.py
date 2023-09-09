@@ -11,13 +11,12 @@ from streamlit_lottie import st_lottie
 import json
 from deep_translator import GoogleTranslator
 import requests
+import openai
 #-----------------------------------------------------------------------------------
 def load_lottiefile(filepath:str):
     with open(filepath,"r") as f:
         return json.load(f)
-#------------------------------------------
-
-
+#__________________________________________________________________________________________
 def translate_text(text):
     chunk_size = 4000
     text_size = len(text)
@@ -29,7 +28,7 @@ def translate_text(text):
         translated_chunks.append(translated)
     translated_text = ' '.join(translated_chunks)
     return translated_text
-#------------------------------------------
+#___________________________________________________________________________________________
 def download_link(url):       
     headers = {
     'authority': 'srvcdn9.2convert.me',
@@ -50,75 +49,115 @@ def download_link(url):
     llll=(f"https://srvcdn9.2convert.me/api/json?url={url}")
     response = requests.get(llll,headers=headers,)
     data = response.json()
+    list_info = []
     if data['formats']['video'][4]['quality'] == "720p":
-        link720 = data['formats']['video'][4]['url']
-
-    listl = []    
-    
-    print(link720)
-    
-    return (link720)
-#-----------------------------------------
+        link720 = data['formats']['video'][4]['url']  
+    link_audio = data['formats']['audio'][0]['url']
+    title =  data['formats']['basename']
+    thumbnail =data['formats']['thumbnail']  
+    rows = {
+        "title" : title,
+        "linkvideo" : link720,
+        "linkaudio": link_audio,
+        "thumbnail" : thumbnail
+    }
+    list_info.append(rows)
+    return (list_info)
+#___________________________________________________________________________________________
 def Youtube_Extract(url):
     loader = YoutubeLoader.from_youtube_url(url)
     data = loader.load()
-    dataa = data[0].page_content
+    try:
+        dataa = data[0].page_content
+    except:
+        dataa = "ویدیو به زبان انگلیسی نیست"
     return (dataa)
-
-
+#___________________________________________________________________________________________
+def gpt (text):
+    try:
+        api_key = "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"
+        openai.api_key = api_key
+        text_prompt = f"این متن مربوط به یک ویدیو است ، به طور خلاصه به من بگو این ویدیو در مورد چیه ، و چه چیزی رو میخواد به ما بگه بدون هیچ حرف اضافه ای  :  {text}"
+        response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=text_prompt,
+        max_tokens=100,
+        temperature=0.5
+        )
+        Youtube_script = response.choices[0].text.strip()
+        return(Youtube_script)
+    except:
+        Youtube_script_fil = ""
+        return(Youtube_script_fil)
+#___________________________________________________________________________________________
 def main():
     st.set_page_config(
         page_title="qashqaeii App",
         page_icon="y.png",
-        
-        
     )
-
-    
-    st.markdown("# یوتوبر ساز")
     st.markdown("""
-این برنامه به کمک هوش مصنوعی و خزشگر یوتوب این امکانات را برای شما محیا میکند :
-                  ترجمه کامل و جامع هم به زبان فارسی و هم انگلیسی
-                  امکان 
-
-    """)
-    
-    lottie_resume = load_lottiefile("youtube.json")
-    st_lottie(
-        animation_source=lottie_resume,
-        speed=1,
-        reverse=False,
-        loop=True,
-        quality="high",
-        height=None,
-        width=250,
-        key=None,
-    )
-
+    <style type="text/css">
+    body{
+    direction:rtl;
+    }
+    </style>
+""",unsafe_allow_html=True)
+    col11, col22 = st.columns([2, 5])
+    with col11:
+        lottie_resume = load_lottiefile("youtube.json")
+        st_lottie(
+            animation_source=lottie_resume,
+            speed=1,
+            reverse=False,
+            loop=True,
+            quality="high",
+            height=None,
+            width=100,
+            key=None,
+        )
+    with col22:
+        st.markdown("# یوتوبر شو")
+        st.markdown("""
+        ###### به کمک این برنامه میتوانید متن کامل مربوط به
+        ###### هر ویدیو یوتوب را هم به زبان فارسی و هم به زبان انگلیسی 
+        ###### دریافت کنید .
+        ###### توجه داشته باشد که ویدیو باید به زبان انگلیسی باشد
+        """)
     with st.form("form2"):
         col3, col4 = st.columns([8, 5])
-        url_query = col3.text_input("Search For Url  🔎 ")
-        if st.form_submit_button("Serch For"): 
+        url_query = col3.text_input(" لینک ویدیو مورد نظر را وارد کنید 🔎 ")
+        if st.form_submit_button("جستجو"): 
             if url_query:
                 st.video(url_query)
                 text_url = Youtube_Extract(url_query)
                 trans_text_url = translate_text(text_url)
-                with st.expander("ترجمه کامل به فارسی و انگلیسی "):
-                    st.text_area("فارسی",value= trans_text_url)
-                    st.text_area("English",value=text_url)
                 downl = download_link(url_query)
-                with st.expander("لینک دانلود"):
-                    st.markdown(f"[download 720]({downl})")
-        
+                title = downl[0]["title"]
+                translate_title = translate_text(title)
+                with st.expander(" متن کامل انگلیسی"):  
+                    st.write(f"title : {title}")
+                    st.text_area("English",value=text_url)
+                with st.expander("ترجمه کامل فارسی"):  
+                    st.write(f"عنوان : {translate_title}")                 
+                    st.text_area("فارسی",value= trans_text_url)
+
+                if downl:
+                    link720 = downl[0]["linkvideo"]
+                    linkaudio = downl[0]["linkaudio"]
+                    tumb = downl[0]["thumbnail"]
+                with st.expander(" لینک دانلود ویدیو"):
+                    st.markdown(f"({link720})")
+                with st.expander("لینک دانلود عکس کاور"):
+                    st.markdown(f"({tumb})")    
+                Ysc = gpt(text_url)
+                with st.expander("به کمک هوش مصنوعی متوجه شویداین ویدیو در مورد چیست !"):
+                    st.text_area("این ویدیو در مورد : ",value=Ysc)
+                    
             else:
                 st.warning("Please enter Url ",icon="🚨")                  
-
         else:
             st.write("لطفا لینک ویدیو مورد نظر را وارد کنید")
-       
     st.markdown("-----")
-
     st.write("Developed by : qashqaeii.ps4@gmail.com 🧛 (حسین قشقایی)")
-
 if __name__ == "__main__":
     main()

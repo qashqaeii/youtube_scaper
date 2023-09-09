@@ -11,7 +11,7 @@ from streamlit_lottie import st_lottie
 import json
 from deep_translator import GoogleTranslator
 import requests
-import openai
+
 #-----------------------------------------------------------------------------------
 def load_lottiefile(filepath:str):
     with open(filepath,"r") as f:
@@ -73,22 +73,6 @@ def Youtube_Extract(url):
         dataa = "ویدیو به زبان انگلیسی نیست"
     return (dataa)
 #___________________________________________________________________________________________
-def gpt (text):
-    try:
-        api_key = "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"
-        openai.api_key = api_key
-        text_prompt = f"این متن مربوط به یک ویدیو است ، به طور خلاصه به من بگو این ویدیو در مورد چیه ، و چه چیزی رو میخواد به ما بگه بدون هیچ حرف اضافه ای  :  {text}"
-        response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=text_prompt,
-        max_tokens=100,
-        temperature=0.5
-        )
-        Youtube_script = response.choices[0].text.strip()
-        return(Youtube_script)
-    except:
-        Youtube_script_fil = ""
-        return(Youtube_script_fil)
 #___________________________________________________________________________________________
 def main():
     st.set_page_config(
@@ -149,9 +133,6 @@ def main():
                     st.markdown(f"({link720})")
                 with st.expander("لینک دانلود عکس کاور"):
                     st.markdown(f"({tumb})")    
-                Ysc = gpt(text_url)
-                with st.expander("به کمک هوش مصنوعی متوجه شویداین ویدیو در مورد چیست !"):
-                    st.text_area("این ویدیو در مورد : ",value=Ysc)
                     
             else:
                 st.warning("Please enter Url ",icon="🚨")                  
